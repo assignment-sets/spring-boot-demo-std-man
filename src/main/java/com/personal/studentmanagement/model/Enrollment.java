@@ -1,0 +1,34 @@
+package com.personal.studentmanagement.model;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "enrollments")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Enrollment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
+    @JsonBackReference
+    private Student student;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", nullable = false)
+    @JsonBackReference
+    private Course course;
+
+    @Column(name = "enrollment_date")
+    private LocalDateTime enrollmentDate;
+}

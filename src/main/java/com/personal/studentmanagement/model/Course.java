@@ -30,6 +30,6 @@ public class Course {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference(value = "course-enrollments")
     private List<Enrollment> enrollments;
 }

@@ -37,7 +37,7 @@ public class Student {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference(value = "student-enrollments")
     private List<Enrollment> enrollments;
 
     @PrePersist

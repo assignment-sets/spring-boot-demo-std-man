@@ -2,6 +2,7 @@ package com.personal.studentmanagement.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "courses")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Course {
@@ -32,4 +34,9 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "course-enrollments")
     private List<Enrollment> enrollments;
+
+    @PrePersist
+    public void onPrePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

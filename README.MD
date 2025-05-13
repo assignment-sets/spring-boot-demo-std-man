@@ -1,173 +1,184 @@
+# Student Management System Design
+
+## Database Schema
+
+```sql
+-- Enrollments Table
 CREATE TABLE enrollments (
-id INT AUTO_INCREMENT PRIMARY KEY,
-student_id INT NOT NULL,
-course_id INT NOT NULL,
-enrollment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
-FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
+    enrollment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
+-- Courses Table
 CREATE TABLE courses (
-id INT AUTO_INCREMENT PRIMARY KEY,
-course_name VARCHAR(100) NOT NULL,
-description TEXT,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Students Table
 CREATE TABLE students (
-id INT AUTO_INCREMENT PRIMARY KEY,
-first_name VARCHAR(50) NOT NULL,
-last_name VARCHAR(50) NOT NULL,
-email VARCHAR(100) UNIQUE NOT NULL,
-date_of_birth DATE,
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    date_of_birth DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+```
 
+---
 
-1. Design your Packages (Folders)
-   We'll follow a layered architecture to keep things organized and scalable.
+## Project Structure
 
-plaintext
-Copy
-Edit
+```
 com.personal.studentmanagement
-├── controller     -> Handle HTTP requests (API endpoints)
-├── service        -> Business logic
-├── repository     -> Database access (JPA Repositories)
-├── model          -> Your Entity classes (Student, Course, Enrollment)
-├── dto            -> Optional: Clean request/response data
-└── exception      -> Handle errors globally
-2. Create JPA Entity Classes
-   We'll create three entities to match your database:
+├── controller     # Handle HTTP requests (API endpoints)
+├── service        # Business logic
+├── repository     # Database access (JPA Repositories)
+├── model          # Entity classes (Student, Course, Enrollment)
+├── dto            # (Optional) Clean request/response data
+└── exception      # Global error handling
+```
 
-Student
+---
 
-Course
+## Implementation Steps
 
-Enrollment
+### 1. Create JPA Entity Classes
 
-These will live in the model package and map directly to the DB tables.
+- **Student**
+- **Course**
+- **Enrollment**
 
-3. Create JPA Repositories
-   Use Spring Data JPA interfaces to interact with the DB (no manual SQL required).
-   Example:
+> These classes live in the `model` package and map directly to the DB tables.
 
-java
-Copy
-Edit
+---
+
+### 2. Create JPA Repositories
+
+Use Spring Data JPA interfaces to interact with the DB.
+
+```java
 public interface StudentRepository extends JpaRepository<Student, Integer> {}
-4. Create Services
-   Add business logic like:
+```
 
-Add a student
+---
 
-Enroll a student in a course
+### 3. Create Services
 
-Fetch students or courses
+Add business logic, such as:
 
-These will go in the service package.
+- Add a student
+- Enroll a student in a course
+- Fetch students or courses
 
-5. Create Controllers
-   These are your REST endpoints.
-   Example:
+---
 
-POST /students
+### 4. Create Controllers
 
-GET /courses
+REST endpoints for your entities.
 
-POST /enrollments
+---
 
-6. (Optional) Add DTOs
-   DTOs help you cleanly separate internal DB entities from request/response payloads.
+### 5. (Optional) Add DTOs
 
-7. (Optional) Global Exception Handling
-   Use @ControllerAdvice for handling bad requests, not founds, etc.
+DTOs help separate internal DB entities from request/response payloads.
 
+---
 
+### 6. (Optional) Global Exception Handling
 
+Use `@ControllerAdvice` for handling bad requests, not founds, etc.
 
+---
 
+## API Endpoints
 
+### 1. StudentController
 
+#### Create a Student
 
+- **POST** `/students`
+- **Body (JSON):**
+    ```json
+    {
+        "firstName": "rashid",
+        "lastName": "khan",
+        "email": "khan.rashid@example.com",
+        "dateOfBirth": "2000-01-01"
+    }
+    ```
 
-1. StudentController (Student-related endpoints)
-   Create a Student (POST):
+#### Get All Students
 
-URL: http://localhost:8081/students
+- **GET** `/students`
 
-Body (JSON):
+#### Get a Student by ID
 
-json
-Copy
-Edit
-{
-"firstName": "rashid",
-"lastName": "khan",
-"email": "khan.rashid@example.com",
-"dateOfBirth": "2000-01-01"
-}
-Get All Students (GET):
+- **GET** `/students/{id}`
 
-URL: http://localhost:8081/students
+#### Delete a Student by ID
 
-Get a Student by ID (GET):
+- **DELETE** `/students/{id}`
 
-URL: http://localhost:8081/students/{id} (replace {id} with the student's ID, for example, 1).
+---
 
-Delete a Student by ID (DELETE):
+### 2. CourseController
 
-URL: http://localhost:8081/students/{id} (replace {id} with the student's ID, for example, 1).
+#### Create a Course
 
-2. CourseController (Course-related endpoints)
-   Create a Course (POST):
+- **POST** `/courses`
+- **Body (JSON):**
+    ```json
+    {
+        "courseName": "Mathematics 101",
+        "description": "An introductory course to Mathematics."
+    }
+    ```
 
-URL: http://localhost:8081/courses
+#### Get All Courses
 
-Body (JSON):
+- **GET** `/courses`
 
-json
-Copy
-Edit
-{
-"courseName": "Mathematics 101",
-"description": "An introductory course to Mathematics."
-}
-Get All Courses (GET):
+#### Get a Course by ID
 
-URL: http://localhost:8081/courses
+- **GET** `/courses/{id}`
 
-Get a Course by ID (GET):
+#### Delete a Course by ID
 
-URL: http://localhost:8081/courses/{id} (replace {id} with the course's ID, for example, 1).
+- **DELETE** `/courses/{id}`
 
-Delete a Course by ID (DELETE):
+---
 
-URL: http://localhost:8081/courses/{id} (replace {id} with the course's ID, for example, 1).
+### 3. EnrollmentController
 
-3. EnrollmentController (Enrollment-related endpoints)
-   Create an Enrollment (POST):
+#### Create an Enrollment
 
-URL: http://localhost:8081/enrollments
+- **POST** `/enrollments`
+- **Body (JSON):**
+    ```json
+    {
+        "studentId": 1,
+        "courseId": 1
+    }
+    ```
 
-Body (JSON):
+#### Get All Enrollments
 
-json
-Copy
-Edit
-{
-"studentId": 1,
-"courseId": 1
-}
-Get All Enrollments (GET):
+- **GET** `/enrollments`
 
-URL: http://localhost:8081/enrollments
+#### Get an Enrollment by ID
 
-Get an Enrollment by ID (GET):
+- **GET** `/enrollments/{id}`
 
-URL: http://localhost:8081/enrollments/{id} (replace {id} with the enrollment's ID, for example, 1).
+#### Delete an Enrollment by ID
 
-Delete an Enrollment by ID (DELETE):
+- **DELETE** `/enrollments/{id}`
 
-URL: http://localhost:8081/enrollments/{id} (replace {id} with the enrollment's ID, for example, 1).
-
+---

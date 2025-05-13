@@ -2,6 +2,7 @@ package com.personal.studentmanagement.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "enrollments")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Enrollment {
@@ -31,4 +33,9 @@ public class Enrollment {
 
     @Column(name = "enrollment_date")
     private LocalDateTime enrollmentDate;
+
+    @PrePersist
+    public void onPrePersist() {
+        this.enrollmentDate = LocalDateTime.now();
+    }
 }
